@@ -5,6 +5,7 @@
 package rmi;
 
 import java.net.MalformedURLException;
+import java.rmi.AlreadyBoundException;
 import java.rmi.Naming;
 import java.rmi.RMISecurityManager;
 import java.rmi.registry.LocateRegistry;
@@ -26,8 +27,8 @@ public class RMIServer extends UnicastRemoteObject implements RMIInterface {
 
 
 	private static final long serialVersionUID = 52L;
-	private int totalMessages = -1;
-	private int[] receivedMessages;
+	private Integer totalMessages = -1;
+	private Boolean[] receivedMessages;
 
 	public RMIServer() throws RemoteException {}
 
@@ -36,23 +37,24 @@ public class RMIServer extends UnicastRemoteObject implements RMIInterface {
 		// TO-DO: On receipt of first message, initialise the receive buffer
 		if(msg.messageNum == 0)
 		{
-			boolean[] buffer = new boolean[msg.totalMessages];
-			for (int i = 0; i < msg.totalMessages; i++)
-				buffer[i] = false;
+			totalMessages = msg.totalMessages;
+			receivedMessages = new Boolean[totalMessages];
+			for (Integer i = 0; i < totalMessages; i++)
+				receivedMessages[i] = false;
 		}
 		
 		// TO-DO: Log receipt of the message
-		buffer[msg.messsageNum] = true;
+		receivedMessages[msg.messageNum] = true;
 		
 		
 		// TO-DO: If this is the last expected message, then identify
 		//        any missing messages
-		if(msg.messageNum == msg.totalMessages -1)
+		if(msg.messageNum == msg.totalMessages - 1)
 		{
-			ArrayList missing = new ArrayList();
-			for(int i = 0; i < msg.totalMessages; i++)
+			ArrayList<Integer> missing = new ArrayList<Integer>();
+			for(Integer i = 0; i < totalMessages; i++)
 			{
-				if(!buffer[i])
+				if(!receivedMessages[i])
 					missing.add(i);
 			}
 		}
@@ -60,7 +62,7 @@ public class RMIServer extends UnicastRemoteObject implements RMIInterface {
 	}
 
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws RemoteException, AlreadyBoundException {
 
 		RMIServer rmis = null;
 
