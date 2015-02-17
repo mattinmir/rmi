@@ -15,15 +15,12 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.Arrays;
 import java.util.ArrayList;
 
-import rmi.RMIInterface;
-
-
-
+import rmi.RMIServerInterface;
 import common.*;
 
 
 
-public class RMIServer extends UnicastRemoteObject implements RMIInterface {
+public class RMIServer extends UnicastRemoteObject implements RMIServerInterface {
 
 
 	private static final long serialVersionUID = 52L;
@@ -32,7 +29,7 @@ public class RMIServer extends UnicastRemoteObject implements RMIInterface {
 
 	public RMIServer() throws RemoteException {}
 
-	public void receiveMessage(MessageInfo msg) throws RemoteException {
+	public ArrayList<Integer> receiveMessage(MessageInfo msg) throws RemoteException {
 
 		// TO-DO: On receipt of first message, initialise the receive buffer
 		if(msg.messageNum == 0)
@@ -57,28 +54,26 @@ public class RMIServer extends UnicastRemoteObject implements RMIInterface {
 				if(!receivedMessages[i])
 					missing.add(i);
 			}
+			return missing; // Once finished receiving messages
 		}
-
+		
+		return null; // If not reached last message, return null
 	}
 
 
 	public static void main(String[] args) throws RemoteException, AlreadyBoundException {
 
-		RMIServer rmis = null;
+		RMIServer server = null;
 
 		// TO-DO: Initialise Security Manager
 		if (System.getSecurityManager() == null)
-	    {
 	        System.setSecurityManager   (new RMISecurityManager());
-	    }
+		
 		// TO-DO: Instantiate the server class
-		RMIServer server = new RMIServer();
+		server = new RMIServer();
 		
-		RMIInterface stub = (RMIInterface) UnicastRemoteObject.exportObject(server, 2222);
-		
-		// TO-DO: Bind to RMI registry
-		Registry registry = LocateRegistry.getRegistry();
-        registry.bind("Hello", stub);
+		// TO-DO: Bind to RMI registry		
+		rebindServer("rmi://" + args[0] + "/RMIServer", server);
 	}
 
 	protected static void rebindServer(String serverURL, RMIServer server) throws RemoteException {
@@ -86,10 +81,15 @@ public class RMIServer extends UnicastRemoteObject implements RMIInterface {
 		// TO-DO:
 		// Start / find the registry (hint use LocateRegistry.createRegistry(...)
 		// If we *know* the registry is running we could skip this (eg run rmiregistry in the start script)
-		Registry registry = LocateRegistry.getRegistry(serverURL, Constant.RMI_PORT);
+		Registry registry = LocateRegistry.createRegistry(Registry.REGISTRY_PORT);
+		RMIServerInterface stub = (RMIServerInterface) UnicastRemoteObject.exportObject(server, Registry.REGISTRY_PORT);
+		
+		
 		// TO-DO:
 		// Now rebind the server to the registry (rebind replaces any existing servers bound to the serverURL)
 		// Note - Registry.rebind (as returned by createRegistry / getRegistry) does something similar but
 		// expects different things from the URL field.
+		registry.rebind(serverURL, server);
 	}
+
 }

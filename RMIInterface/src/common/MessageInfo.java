@@ -3,6 +3,8 @@ package common;
 
 import java.io.Serializable;
 
+import sun.rmi.server.UnicastServerRef;
+
 /**
  * Utility class that encapsulates the message information to
  * be passed from client to server.  Information can be extracted
@@ -14,6 +16,7 @@ import java.io.Serializable;
 public class MessageInfo implements Serializable {
 
 	public static final long serialVersionUID = 52L;
+
 
 	public int totalMessages;
 	public int messageNum;
