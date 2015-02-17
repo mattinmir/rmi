@@ -12,8 +12,10 @@ import java.rmi.registry.Registry;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Arrays;
+import java.util.ArrayList;
 
 import rmi.RMIInterface;
+
 
 
 import common.*;
@@ -27,17 +29,33 @@ public class RMIServer extends UnicastRemoteObject implements RMIInterface {
 	private int totalMessages = -1;
 	private int[] receivedMessages;
 
-	public RMIServer() throws RemoteException {
-	}
+	public RMIServer() throws RemoteException {}
 
 	public void receiveMessage(MessageInfo msg) throws RemoteException {
 
 		// TO-DO: On receipt of first message, initialise the receive buffer
+		if(msg.messageNum == 0)
+		{
+			boolean[] buffer = new boolean[msg.totalMessages];
+			for (int i = 0; i < msg.totalMessages; i++)
+				buffer[i] = false;
+		}
 		
 		// TO-DO: Log receipt of the message
-
+		buffer[msg.messsageNum] = true;
+		
+		
 		// TO-DO: If this is the last expected message, then identify
 		//        any missing messages
+		if(msg.messageNum == msg.totalMessages)
+		{
+			ArrayList missing = new ArrayList();
+			for(int i = 0; i < msg.totalMessages; i++)
+			{
+				if(!buffer[i])
+					missing.add(i);
+			}
+		}
 
 	}
 
@@ -52,7 +70,9 @@ public class RMIServer extends UnicastRemoteObject implements RMIInterface {
 	        System.setSecurityManager   (new RMISecurityManager());
 	    }
 		// TO-DO: Instantiate the server class
-
+		RMIServer server = new RMIServer();
+		
+		
 		// TO-DO: Bind to RMI registry
 
 	}
