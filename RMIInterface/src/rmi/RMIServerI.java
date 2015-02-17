@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import common.*;
 
 
-public interface RMIServerInterface extends Remote 
+public interface RMIServerI extends Remote 
 {
 	public ArrayList<Integer> receiveMessage(MessageInfo msg) throws RemoteException;
 }
