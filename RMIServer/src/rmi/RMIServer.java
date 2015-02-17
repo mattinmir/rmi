@@ -47,7 +47,7 @@ public class RMIServer extends UnicastRemoteObject implements RMIInterface {
 		
 		// TO-DO: If this is the last expected message, then identify
 		//        any missing messages
-		if(msg.messageNum == msg.totalMessages)
+		if(msg.messageNum == msg.totalMessages -1)
 		{
 			ArrayList missing = new ArrayList();
 			for(int i = 0; i < msg.totalMessages; i++)
@@ -72,9 +72,11 @@ public class RMIServer extends UnicastRemoteObject implements RMIInterface {
 		// TO-DO: Instantiate the server class
 		RMIServer server = new RMIServer();
 		
+		RMIInterface stub = (RMIInterface) UnicastRemoteObject.exportObject(server, 2222);
 		
 		// TO-DO: Bind to RMI registry
-
+		Registry registry = LocateRegistry.getRegistry();
+        registry.bind("Hello", stub);
 	}
 
 	protected static void rebindServer(String serverURL, RMIServer server) throws RemoteException {
