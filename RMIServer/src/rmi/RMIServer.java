@@ -15,12 +15,12 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.Arrays;
 import java.util.ArrayList;
 
-import rmi.RMIServerInterface;
+import rmi.RMIServerI;
 import common.*;
 
 
 
-public class RMIServer extends UnicastRemoteObject implements RMIServerInterface {
+public class RMIServer extends UnicastRemoteObject implements RMIServerI {
 
 
 	private static final long serialVersionUID = 52L;
@@ -29,7 +29,7 @@ public class RMIServer extends UnicastRemoteObject implements RMIServerInterface
 
 	public RMIServer() throws RemoteException {}
 
-	public ArrayList<Integer> receiveMessage(MessageInfo msg) throws RemoteException {
+	public void receiveMessage(MessageInfo msg) throws RemoteException {
 
 		// TO-DO: On receipt of first message, initialise the receive buffer
 		if(msg.messageNum == 0)
@@ -46,6 +46,7 @@ public class RMIServer extends UnicastRemoteObject implements RMIServerInterface
 		
 		// TO-DO: If this is the last expected message, then identify
 		//        any missing messages
+		
 		if(msg.messageNum == msg.totalMessages - 1)
 		{
 			ArrayList<Integer> missing = new ArrayList<Integer>();
@@ -54,12 +55,15 @@ public class RMIServer extends UnicastRemoteObject implements RMIServerInterface
 				if(!receivedMessages[i])
 					missing.add(i);
 			}
-			return missing; // Once finished receiving messages
+			// Print info about lost messages
+			System.out.println("Lost messages numbers: ");
+			for (int i = 0; i < missing.size(); i++) 
+			{
+				System.out.println(missing.get(i));
+			}
 		}
 		
-		return null; // If not reached last message, return null
 	}
-
 
 	public static void main(String[] args) throws RemoteException, AlreadyBoundException {
 
@@ -67,7 +71,7 @@ public class RMIServer extends UnicastRemoteObject implements RMIServerInterface
 
 		// TO-DO: Initialise Security Manager
 		if (System.getSecurityManager() == null)
-	        System.setSecurityManager   (new RMISecurityManager());
+	        System.setSecurityManager(new RMISecurityManager());
 		
 		// TO-DO: Instantiate the server class
 		server = new RMIServer();
@@ -82,7 +86,7 @@ public class RMIServer extends UnicastRemoteObject implements RMIServerInterface
 		// Start / find the registry (hint use LocateRegistry.createRegistry(...)
 		// If we *know* the registry is running we could skip this (eg run rmiregistry in the start script)
 		Registry registry = LocateRegistry.createRegistry(Registry.REGISTRY_PORT);
-		RMIServerInterface stub = (RMIServerInterface) UnicastRemoteObject.exportObject(server, Registry.REGISTRY_PORT);
+		RMIServerI stub = (RMIServerI) UnicastRemoteObject.exportObject(server, Registry.REGISTRY_PORT);
 		
 		
 		// TO-DO:

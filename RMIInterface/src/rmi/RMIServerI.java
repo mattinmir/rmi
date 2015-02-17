@@ -10,5 +10,5 @@ import common.*;
 
 public interface RMIServerI extends Remote 
 {
-	public ArrayList<Integer> receiveMessage(MessageInfo msg) throws RemoteException;
+	public void receiveMessage(MessageInfo msg) throws RemoteException;
 }

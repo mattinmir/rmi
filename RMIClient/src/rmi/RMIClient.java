@@ -15,7 +15,7 @@ public class RMIClient {
 
 	public static void main(String[] args) throws RemoteException {
 
-		RMIServerInterface iRMIServer = null;
+		RMIServerI iRMIServer = null;
 
 		// Check arguments for Server host and number of messages
 		if (args.length != 2){
@@ -32,24 +32,22 @@ public class RMIClient {
 	    
 		// TO-DO: Bind to RMIServer
 		Registry registry = LocateRegistry.getRegistry(Registry.REGISTRY_PORT);
-		try {
-			RMIServerInterface remote = (RMIServerInterface) registry.lookup(urlServer);
-		} catch (NotBoundException e) {
+		try 
+		{
+			RMIServerI remote = (RMIServerI) registry.lookup(urlServer);
+		} 
+		catch (NotBoundException e) 
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		// TO-DO: Attempt to send messages the specified number of times
-		ArrayList<Integer> missing = null;
+		
 		for (int i = 0; i < numMessages; i++) 
 		{
-			missing = iRMIServer.receiveMessage(new MessageInfo(numMessages, i));
+			 iRMIServer.receiveMessage(new MessageInfo(numMessages, i));
 		}
 		
-		// Print info about lost messages
-		System.out.println("Lost messages numbers: ");
-		for (int i = 0; i < missing.size(); i++) 
-		{
-			System.out.println(missing.get(i));
-		}
+		
 	}
 }
