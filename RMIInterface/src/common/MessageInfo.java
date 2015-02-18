@@ -5,14 +5,7 @@ import java.io.Serializable;
 
 import sun.rmi.server.UnicastServerRef;
 
-/**
- * Utility class that encapsulates the message information to
- * be passed from client to server.  Information can be extracted
- * or constructed as a String for use by the UDP example.
- *
- * @author bandara
- *
- */
+
 public class MessageInfo implements Serializable {
 
 	public static final long serialVersionUID = 52L;
