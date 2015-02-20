@@ -13,13 +13,15 @@ import common.*;
 
 public class RMIClient {
 
-	public static void main(String[] args) throws RemoteException {
+	public static void main(String[] args) throws RemoteException 
+	{
 
 		RMIServerI iRMIServer = null;
 
 		// Check arguments for Server host and number of messages
 		if (args.length != 2){
-			System.out.println("Needs 2 arguments: ServerHostName/IPAddress, TotalMessageCount");
+			System.out.println("Needs 2 arguments: "
+					+ "ServerHostName/IPAddress, TotalMessageCount");
 			System.exit(-1);
 		}
 
@@ -39,7 +41,8 @@ public class RMIClient {
 			
 			for (int i = 0; i < numMessages; i++) 
 			{
-				iRMIServer.receiveMessage(new MessageInfo(numMessages, i));
+				iRMIServer.receiveMessage(
+						new MessageInfo(numMessages, i));
 			}
 		} 
 		catch (Exception e) 

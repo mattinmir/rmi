@@ -4,6 +4,10 @@
  */
 package rmi;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.rmi.AlreadyBoundException;
 import java.rmi.Naming;
@@ -20,18 +24,20 @@ import common.*;
 
 
 
-public class RMIServer implements RMIServerI {
+public class RMIServer implements RMIServerI {                                    
 
 
 	private static final long serialVersionUID = 52L;
 	private Integer totalMessages = -1;
 	private Boolean[] receivedMessages;
-	private static final int port = Registry.REGISTRY_PORT;
+	private static final int port = 1099;
 
 	public RMIServer() throws RemoteException {}
 
-	public void receiveMessage(MessageInfo msg) throws RemoteException {
-
+	public void receiveMessage(MessageInfo msg) throws 
+	RemoteException,FileNotFoundException,
+	UnsupportedEncodingException
+	{
 		// TO-DO: On receipt of first message, initialise the receive buffer
 		if(msg.messageNum == 0)
 		{
@@ -43,30 +49,38 @@ public class RMIServer implements RMIServerI {
 		
 		// TO-DO: Log receipt of the message
 		receivedMessages[msg.messageNum] = true;
-		
-		
+				
 		// TO-DO: If this is the last expected message, then identify
 		//        any missing messages
 		
 		if(msg.messageNum == msg.totalMessages - 1)
 		{
 			ArrayList<Integer> missing = new ArrayList<Integer>();
+			int totalRecieved = 0;
 			for(Integer i = 0; i < totalMessages; i++)
 			{
 				if(!receivedMessages[i])
 					missing.add(i);
+				else
+					totalRecieved++;
 			}
 			// Print info about lost messages
-			System.out.println("Lost messages numbers: ");
+			System.out.println("Number of Recieved Messages: " + totalRecieved);
+			System.out.println("Number of Lost messages: " + missing.size());
+			System.out.println("See RMI_lost.txt for lost messages.");
+			PrintWriter writer = new PrintWriter("RMI_lost.txt", "UTF-8");
 			for (int i = 0; i < missing.size(); i++) 
 			{
-				System.out.println(missing.get(i));
+				writer.println(i);
 			}
+			writer.close();
 		}
+		
 		
 	}
 
-	public static void main(String[] args) throws RemoteException, AlreadyBoundException {
+	public static void main(String[] args) throws AlreadyBoundException, IOException 
+	{
 
 		RMIServer server = null;
 		
@@ -93,24 +107,30 @@ public class RMIServer implements RMIServerI {
 		{
 			server = new RMIServer();
 			rebindServer("RMIServer", server);
-			System.out.println("Server bound to registry. Port: " + port);
+			
 		}
 		catch(Exception e)
 		{
 			e.printStackTrace();
 			System.exit(-1);
 		}
-		
+		System.out.println("Server bound to registry using port: " 
+			+ port);
+		System.out.println("Hit any key to kill the server.");
+		System.in.read();
 		System.out.println("Finished");
 	}
 
-	protected static void rebindServer(String serverName, RMIServer server) throws RemoteException {
+	protected static void rebindServer(String serverName, 
+			RMIServer server) throws RemoteException
+	{
 
 		// TO-DO:
 		// Start / find the registry (hint use LocateRegistry.createRegistry(...)
 		// If we *know* the registry is running we could skip this (eg run rmiregistry in the start script)
 		Registry registry = LocateRegistry.createRegistry(port);
-		RMIServerI stub = (RMIServerI) UnicastRemoteObject.exportObject(server, port);
+		RMIServerI stub = (RMIServerI) UnicastRemoteObject.
+				exportObject(server, port);
 		
 		
 		// TO-DO:
