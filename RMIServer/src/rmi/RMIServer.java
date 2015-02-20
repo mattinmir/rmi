@@ -20,7 +20,7 @@ import common.*;
 
 
 
-public class RMIServer extends UnicastRemoteObject implements RMIServerI {
+public class RMIServer implements RMIServerI {
 
 
 	private static final long serialVersionUID = 52L;
@@ -68,7 +68,6 @@ public class RMIServer extends UnicastRemoteObject implements RMIServerI {
 	public static void main(String[] args) throws RemoteException, AlreadyBoundException {
 
 		RMIServer server = null;
-
 		// TO-DO: Initialise Security Manager
 		if (System.getSecurityManager() == null)
 	        System.setSecurityManager(new RMISecurityManager());
@@ -77,18 +76,30 @@ public class RMIServer extends UnicastRemoteObject implements RMIServerI {
 		server = new RMIServer();
 		
 		// TO-DO: Bind to RMI registry		
+//		try // try to bind to registry if already open
+//		{
+//			Registry registry = LocateRegistry.getRegistry(Registry.REGISTRY_PORT);
+//			RMIServerI stub = (RMIServerI) UnicastRemoteObject.exportObject(server, Registry.REGISTRY_PORT);
+//			registry.bind("RMIServer", stub);
+//		}
+//		catch(Exception e) // If not already open, create it and rebind
+//		{
+//			rebindServer("RMIServer", server);
+//		}
+		
 		try
 		{
-			rebindServer("RMIServer");
+			rebindServer("RMIServer", server);
+			System.out.println("Server bound to registry. Port: " + Registry.REGISTRY_PORT);
 		}
-		catch(ArrayIndexOutOfBoundsException e)
+		catch(Exception e)
 		{
-			System.out.println("Arguments needed: <ip address>");
+			System.out.println("Could not bind server");
 			System.exit(-1);
 		}
 	}
 
-	protected static void rebindServer(String serverName) throws RemoteException {
+	protected static void rebindServer(String serverName, RMIServer server) throws RemoteException {
 
 		// TO-DO:
 		// Start / find the registry (hint use LocateRegistry.createRegistry(...)
