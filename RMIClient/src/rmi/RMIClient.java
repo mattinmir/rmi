@@ -23,7 +23,7 @@ public class RMIClient {
 			System.exit(-1);
 		}
 
-		String urlServer = new String("rmi://" + args[0] + "/RMIServer");
+		String urlServer = new String(args[0]);
 		int numMessages = Integer.parseInt(args[1]);
 
 		// TO-DO: Initialise Security Manager
@@ -31,14 +31,14 @@ public class RMIClient {
 	        System.setSecurityManager   (new RMISecurityManager());
 	    
 		// TO-DO: Bind to RMIServer
-		Registry registry = LocateRegistry.getRegistry(Registry.REGISTRY_PORT);
+		Registry registry = LocateRegistry.getRegistry(urlServer);
 		try 
 		{
-			RMIServerI remote = (RMIServerI) registry.lookup(urlServer);
+			iRMIServer = (RMIServerI) registry.lookup("RMIServer");
 		} 
 		catch (NotBoundException e) 
 		{
-			// TODO Auto-generated catch block
+			// TODO Auto-generated catch block 
 			e.printStackTrace();
 		}
 		// TO-DO: Attempt to send messages the specified number of times
