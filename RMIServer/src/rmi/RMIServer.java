@@ -26,6 +26,7 @@ public class RMIServer implements RMIServerI {
 	private static final long serialVersionUID = 52L;
 	private Integer totalMessages = -1;
 	private Boolean[] receivedMessages;
+	private static final int port = Registry.REGISTRY_PORT;
 
 	public RMIServer() throws RemoteException {}
 
@@ -68,12 +69,13 @@ public class RMIServer implements RMIServerI {
 	public static void main(String[] args) throws RemoteException, AlreadyBoundException {
 
 		RMIServer server = null;
+		
 		// TO-DO: Initialise Security Manager
 		if (System.getSecurityManager() == null)
 	        System.setSecurityManager(new RMISecurityManager());
 		
 		// TO-DO: Instantiate the server class
-		server = new RMIServer();
+		
 		
 		// TO-DO: Bind to RMI registry		
 //		try // try to bind to registry if already open
@@ -89,14 +91,17 @@ public class RMIServer implements RMIServerI {
 		
 		try
 		{
+			server = new RMIServer();
 			rebindServer("RMIServer", server);
-			System.out.println("Server bound to registry. Port: " + Registry.REGISTRY_PORT);
+			System.out.println("Server bound to registry. Port: " + port);
 		}
 		catch(Exception e)
 		{
-			System.out.println("Could not bind server");
+			e.printStackTrace();
 			System.exit(-1);
 		}
+		
+		System.out.println("Finished");
 	}
 
 	protected static void rebindServer(String serverName, RMIServer server) throws RemoteException {
@@ -104,8 +109,8 @@ public class RMIServer implements RMIServerI {
 		// TO-DO:
 		// Start / find the registry (hint use LocateRegistry.createRegistry(...)
 		// If we *know* the registry is running we could skip this (eg run rmiregistry in the start script)
-		Registry registry = LocateRegistry.createRegistry(Registry.REGISTRY_PORT);
-		RMIServerI stub = (RMIServerI) UnicastRemoteObject.exportObject(server, Registry.REGISTRY_PORT);
+		Registry registry = LocateRegistry.createRegistry(port);
+		RMIServerI stub = (RMIServerI) UnicastRemoteObject.exportObject(server, port);
 		
 		
 		// TO-DO:

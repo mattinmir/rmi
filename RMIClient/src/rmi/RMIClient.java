@@ -31,23 +31,23 @@ public class RMIClient {
 	        System.setSecurityManager   (new RMISecurityManager());
 	    
 		// TO-DO: Bind to RMIServer
-		Registry registry = LocateRegistry.getRegistry(urlServer);
+		
 		try 
 		{
+			Registry registry = LocateRegistry.getRegistry(urlServer);
 			iRMIServer = (RMIServerI) registry.lookup("RMIServer");
+			
+			for (int i = 0; i < numMessages; i++) 
+			{
+				iRMIServer.receiveMessage(new MessageInfo(numMessages, i));
+			}
 		} 
-		catch (NotBoundException e) 
+		catch (Exception e) 
 		{
 			// TODO Auto-generated catch block 
 			e.printStackTrace();
 		}
 		// TO-DO: Attempt to send messages the specified number of times
-		
-		for (int i = 0; i < numMessages; i++) 
-		{
-			 iRMIServer.receiveMessage(new MessageInfo(numMessages, i));
-		}
-		
 		
 	}
 }
