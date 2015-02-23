@@ -28,11 +28,8 @@ public class RMIClient {
 		String urlServer = new String(args[0]);
 		int numMessages = Integer.parseInt(args[1]);
 
-		// TO-DO: Initialise Security Manager
 		if (System.getSecurityManager() == null)
 	        System.setSecurityManager   (new RMISecurityManager());
-	    
-		// TO-DO: Bind to RMIServer
 		
 		try 
 		{
@@ -47,10 +44,7 @@ public class RMIClient {
 		} 
 		catch (Exception e) 
 		{
-			// TODO Auto-generated catch block 
 			e.printStackTrace();
 		}
-		// TO-DO: Attempt to send messages the specified number of times
-		
 	}
 }
