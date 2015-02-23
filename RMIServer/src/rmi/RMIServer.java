@@ -116,9 +116,9 @@ public class RMIServer implements RMIServerI {
 		}
 		System.out.println("Server bound to registry using port: " 
 			+ port);
-		System.out.println("Hit any key to kill the server.");
+		System.out.println("Hit enter key to kill the server.");
 		System.in.read();
-		System.out.println("Finished");
+		System.exit(0);
 	}
 
 	protected static void rebindServer(String serverName, 
