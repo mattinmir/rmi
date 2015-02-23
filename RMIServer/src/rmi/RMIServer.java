@@ -1,7 +1,3 @@
-/*
- * Created on 07-Sep-2004
- * @author bandara
- */
 package rmi;
 
 import java.io.FileNotFoundException;
@@ -38,7 +34,6 @@ public class RMIServer implements RMIServerI {
 	RemoteException,FileNotFoundException,
 	UnsupportedEncodingException
 	{
-		// TO-DO: On receipt of first message, initialise the receive buffer
 		if(msg.messageNum == 0)
 		{
 			totalMessages = msg.totalMessages;
@@ -47,12 +42,8 @@ public class RMIServer implements RMIServerI {
 				receivedMessages[i] = false;
 		}
 		
-		// TO-DO: Log receipt of the message
 		receivedMessages[msg.messageNum] = true;
 				
-		// TO-DO: If this is the last expected message, then identify
-		//        any missing messages
-		
 		if(msg.messageNum == msg.totalMessages - 1)
 		{
 			ArrayList<Integer> missing = new ArrayList<Integer>();
@@ -75,34 +66,15 @@ public class RMIServer implements RMIServerI {
 			}
 			writer.close();
 		}
-		
-		
 	}
 
 	public static void main(String[] args) throws AlreadyBoundException, IOException 
 	{
-
 		RMIServer server = null;
 		
-		// TO-DO: Initialise Security Manager
 		if (System.getSecurityManager() == null)
 	        System.setSecurityManager(new RMISecurityManager());
-		
-		// TO-DO: Instantiate the server class
-		
-		
-		// TO-DO: Bind to RMI registry		
-//		try // try to bind to registry if already open
-//		{
-//			Registry registry = LocateRegistry.getRegistry(Registry.REGISTRY_PORT);
-//			RMIServerI stub = (RMIServerI) UnicastRemoteObject.exportObject(server, Registry.REGISTRY_PORT);
-//			registry.bind("RMIServer", stub);
-//		}
-//		catch(Exception e) // If not already open, create it and rebind
-//		{
-//			rebindServer("RMIServer", server);
-//		}
-		
+	
 		try
 		{
 			server = new RMIServer();
@@ -124,22 +96,9 @@ public class RMIServer implements RMIServerI {
 	protected static void rebindServer(String serverName, 
 			RMIServer server) throws RemoteException
 	{
-
-		// TO-DO:
-		// Start / find the registry (hint use LocateRegistry.createRegistry(...)
-		// If we *know* the registry is running we could skip this (eg run rmiregistry in the start script)
 		Registry registry = LocateRegistry.createRegistry(port);
 		RMIServerI stub = (RMIServerI) UnicastRemoteObject.
 				exportObject(server, port);
-		
-		
-		// TO-DO:
-		// Now rebind the server to the registry (rebind replaces any existing servers bound to the serverURL)
-		// Note - Registry.rebind (as returned by createRegistry / getRegistry) does something similar but
-		// expects different things from the URL field.
-		
-		
-		//registry.rebind(serverURL, server);
 		
 		registry.rebind(serverName, stub);
 	}
